@@ -1,9 +1,11 @@
 <?php
+//モデルパス
 require_once MODEL_PATH . 'functions.php';
 require_once MODEL_PATH . 'db.php';
 
 // DB利用
 
+//商品情報取得関数
 function get_item($db, $item_id){
   $sql = "
     SELECT
@@ -43,10 +45,12 @@ function get_items($db, $is_open = false){
   return fetch_all_query($db, $sql);
 }
 
+//全てのアイテム情報を取得する関数
 function get_all_items($db){
   return get_items($db);
 }
 
+//公開になっているアイテム情報を取得する関数
 function get_open_items($db){
   return get_items($db, true);
 }
@@ -59,13 +63,16 @@ function regist_item($db, $name, $price, $stock, $status, $image){
   return regist_item_transaction($db, $name, $price, $stock, $status, $image, $filename);
 }
 
+//アイテムを登録する際のトランザクションを施した関数
 function regist_item_transaction($db, $name, $price, $stock, $status, $image, $filename){
   $db->beginTransaction();
+  //アイテムのインサートと画像の保存が成功した場合はコミット
   if(insert_item($db, $name, $price, $stock, $filename, $status) 
     && save_image($image, $filename)){
     $db->commit();
     return true;
   }
+  //登録できなかった場合はロールバック
   $db->rollback();
   return false;
   
@@ -88,6 +95,7 @@ function insert_item($db, $name, $price, $stock, $filename, $status){
   return execute_query($db, $sql);
 }
 
+//公開非公開を変更する関数
 function update_item_status($db, $item_id, $status){
   $sql = "
     UPDATE
@@ -102,6 +110,7 @@ function update_item_status($db, $item_id, $status){
   return execute_query($db, $sql);
 }
 
+//アイテムのストックをアップデートする関数
 function update_item_stock($db, $item_id, $stock){
   $sql = "
     UPDATE
@@ -122,11 +131,13 @@ function destroy_item($db, $item_id){
     return false;
   }
   $db->beginTransaction();
+  //アイテム情報と画像情報を両方削除できた場合はコミット
   if(delete_item($db, $item['item_id'])
     && delete_image($item['image'])){
     $db->commit();
     return true;
   }
+  //削除できないなどの不具合がある場合はロールバック
   $db->rollback();
   return false;
 }
@@ -164,8 +175,10 @@ function validate_item($name, $price, $stock, $filename, $status){
     && $is_valid_item_status;
 }
 
+//アイテムの名前を検証するための関数
 function is_valid_item_name($name){
   $is_valid = true;
+  //商品名が規定より短い場合、または長い場合のエラー処理
   if(is_valid_length($name, ITEM_NAME_LENGTH_MIN, ITEM_NAME_LENGTH_MAX) === false){
     set_error('商品名は'. ITEM_NAME_LENGTH_MIN . '文字以上、' . ITEM_NAME_LENGTH_MAX . '文字以内にしてください。');
     $is_valid = false;
@@ -173,6 +186,7 @@ function is_valid_item_name($name){
   return $is_valid;
 }
 
+//アイテムの値段を検証するための関数
 function is_valid_item_price($price){
   $is_valid = true;
   if(is_positive_integer($price) === false){
@@ -182,6 +196,7 @@ function is_valid_item_price($price){
   return $is_valid;
 }
 
+//アイテムのストックを検証する関数
 function is_valid_item_stock($stock){
   $is_valid = true;
   if(is_positive_integer($stock) === false){
@@ -191,6 +206,7 @@ function is_valid_item_stock($stock){
   return $is_valid;
 }
 
+//ファイルの名前を検証する関数
 function is_valid_item_filename($filename){
   $is_valid = true;
   if($filename === ''){
@@ -199,6 +215,7 @@ function is_valid_item_filename($filename){
   return $is_valid;
 }
 
+//ファイルのステータスを検証する関数
 function is_valid_item_status($status){
   $is_valid = true;
   if(isset(PERMITTED_ITEM_STATUSES[$status]) === false){
