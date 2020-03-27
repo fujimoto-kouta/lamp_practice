@@ -6,7 +6,9 @@
   <link rel="stylesheet" href="<?php print(STYLESHEET_PATH . 'cart.css'); ?>">
 </head>
 <body>
-  <?php include VIEW_PATH . 'templates/header_logined.php'; ?>
+  <?php include VIEW_PATH . 'templates/header_logined.php'; 
+        require_once MODEL_PATH . 'functions.php';
+  ?>
   <h1>カート</h1>
   <div class="container">
 
@@ -28,7 +30,7 @@
           <?php foreach($carts as $cart){ ?>
           <tr>
             <td><img src="<?php print(IMAGE_PATH . $cart['image']);?>" class="item_image"></td>
-            <td><?php print($cart['name']); ?></td>
+            <td><?php print h($cart['name']); ?></td>
             <td><?php print(number_format($cart['price'])); ?>円</td>
             <td>
               <form method="post" action="cart_change_amount.php">
