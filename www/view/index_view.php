@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <?php include VIEW_PATH . 'templates/head.php'; ?>
+  <?php include VIEW_PATH . 'templates/head.php'; 
+        require_once MODEL_PATH . 'functions.php';
+  ?>
   
   <title>商品一覧</title>
   <link rel="stylesheet" href="<?php print(STYLESHEET_PATH . 'index.css'); ?>">
@@ -20,7 +22,7 @@
         <div class="col-6 item">
           <div class="card h-100 text-center">
             <div class="card-header">
-              <?php print($item['name']); ?>
+              <?php print h($item['name']); ?>
             </div>
             <figure class="card-body">
               <img class="card-img" src="<?php print(IMAGE_PATH . $item['image']); ?>">

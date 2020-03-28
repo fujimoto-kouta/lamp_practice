@@ -4,8 +4,10 @@ require_once MODEL_PATH . 'functions.php';
 require_once MODEL_PATH . 'user.php';
 require_once MODEL_PATH . 'item.php';
 
+//セッションを開始
 session_start();
 
+//ログイン状態でなければ、ログイン画面へリダイレクト
 if(is_logined() === false){
   redirect_to(LOGIN_URL);
 }
