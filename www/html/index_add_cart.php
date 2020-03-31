@@ -16,6 +16,10 @@ $user = get_login_user($db);
 
 
 $item_id = get_post('item_id');
+$token = get_post('token');
+if (is_valid_csrf_token($token) === false) {
+  set_error('不正な処理です');
+}
 
 if(add_cart($db,$user['user_id'], $item_id)){
   set_message('カートに商品を追加しました。');
