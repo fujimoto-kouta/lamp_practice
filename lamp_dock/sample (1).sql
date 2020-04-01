@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- ホスト: mysql
--- 生成日時: 2020 年 3 月 31 日 18:51
+-- 生成日時: 2020 年 4 月 01 日 20:12
 -- サーバのバージョン： 5.7.29
 -- PHP のバージョン: 7.4.1
 
@@ -49,19 +49,6 @@ INSERT INTO `carts` (`cart_id`, `user_id`, `item_id`, `amount`, `created`, `upda
 -- --------------------------------------------------------
 
 --
--- テーブルの構造 `history`
---
-
-CREATE TABLE `history` (
-  `id` int(11) NOT NULL,
-  `order_number` int(11) NOT NULL,
-  `total` int(11) NOT NULL,
-  `created` datetime NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
-
---
 -- テーブルの構造 `items`
 --
 
@@ -96,7 +83,7 @@ CREATE TABLE `orderdetails` (
   `order_number` int(11) NOT NULL,
   `item_id` int(11) NOT NULL,
   `amount` int(11) NOT NULL,
-  `created` datetime NOT NULL
+  `purchase_price` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -108,6 +95,7 @@ CREATE TABLE `orderdetails` (
 CREATE TABLE `orders` (
   `order_number` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
+  `total` int(11) NOT NULL,
   `created` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -147,12 +135,6 @@ ALTER TABLE `carts`
   ADD KEY `user_id` (`user_id`);
 
 --
--- テーブルのインデックス `history`
---
-ALTER TABLE `history`
-  ADD PRIMARY KEY (`id`);
-
---
 -- テーブルのインデックス `items`
 --
 ALTER TABLE `items`
@@ -185,12 +167,6 @@ ALTER TABLE `users`
 --
 ALTER TABLE `carts`
   MODIFY `cart_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
-
---
--- テーブルのAUTO_INCREMENT `history`
---
-ALTER TABLE `history`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- テーブルのAUTO_INCREMENT `items`
