@@ -117,9 +117,12 @@ function delete_cart($db, $cart_id)
   return execute_query($db, $sql, [$cart_id]);
 }
 
-//カートの中身を購入する関数
+//カートの中身を購入する一連の流れの関数
 function purchase_carts($db, $carts)
 {
+  //トランザクション処理
+  $db->beginTransaction();
+
   if (validate_cart_purchase($carts) === false) {
     return false;
   }
@@ -132,10 +135,20 @@ function purchase_carts($db, $carts)
       set_error($cart['name'] . 'の購入に失敗しました。');
     }
   }
-
+  //ユーザのカートを消去する処理
   delete_user_carts($db, $carts[0]['user_id']);
-
+  //購入履歴、購入詳細へインサートする処理
   create_histories($db, $carts);
+  //エラーがあれば、ロールバック
+  if (has_error()) {
+    $db->rollBack();
+    return false;
+  } else {
+    //エラーがなければコミット
+    $db->commit();
+    return true;
+  }
+
 }
 
 //$user_idを基に、カートの中身を削除する関数
@@ -178,6 +191,10 @@ function validate_cart_purchase($carts)
     //購入総数がストック総数を上回っていた時の処理
     if ($cart['stock'] - $cart['amount'] < 0) {
       set_error($cart['name'] . 'は在庫が足りません。購入可能数:' . $cart['stock']);
+    }
+    //購入総数が０個だった場合の処理
+    if ($cart['amount'] === 0) {
+      set_error(($cart['name']) . 'の購入数を０個以上にしてください。購入可能数' . $cart['stock']);
     }
   }
   if (has_error() === true) {

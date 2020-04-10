@@ -24,18 +24,10 @@ $carts = get_user_carts($db, $user['user_id']);
 $total_price = sum_carts($carts);
 
 
-//購入の一連の流れのトランザクション
-$db->beginTransaction();
 
  if(purchase_carts($db, $carts) === false){
      set_error('商品が購入できませんでした。');
      redirect_to(CART_URL);
  } 
 
- //エラーを確認し、あればロールバック、なければコミット
- if(has_error()) {
-   $db->rollBack();
- } else {
-   $db->commit();
- }
 include_once '../view/finish_view.php';
