@@ -8,13 +8,13 @@
 
 </head>
 <body>
-	<h1>csrf体験</h1>
-	<p>
+    <h1>csrf体験</h1>
+    <p>
     CSRFを体験してみましょう。
     勝手にカートに商品が追加されます。
     <a href="cart.php">カートへ移動</a>
-	</p>
-  
+    </p>
+
   <iframe 
     id="csrf" 
     src="index.php">
@@ -24,10 +24,10 @@
       $('#csrf').contents().find('form').each(function(){
         $(this).submit();
       });
-      
+
       alert('カートに商品を登録しました。');
     }, 3000);
-      
+
   </script>
 </body>
 </html>
