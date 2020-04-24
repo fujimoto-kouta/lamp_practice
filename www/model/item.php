@@ -24,7 +24,48 @@ function get_item($db, $item_id){
   return fetch_query($db, $sql, [$item_id]);
 }
 
-function get_items($db, $is_open = false){
+function get_items($db){
+  $sql = '
+  SELECT
+    item_id, 
+    name,
+    stock,
+    price,
+    image,
+    status
+  FROM
+    items
+';
+
+return fetch_all_query($db, $sql);
+}
+
+
+//新着順の商品取得
+function get_items_new($db, $is_open = false){
+  $sql = '
+  SELECT
+    item_id, 
+    name,
+    stock,
+    price,
+    image,
+    status
+  FROM
+    items
+';
+if($is_open === true){
+  $sql .= '
+    WHERE status = 1
+    ORDER BY item_id DESC
+  ';
+
+return fetch_all_query($db, $sql);
+}
+}
+
+//価格の安い順の商品取得
+function get_items_cheap($db, $is_open = false){
   $sql = '
     SELECT
       item_id, 
@@ -39,11 +80,40 @@ function get_items($db, $is_open = false){
   if($is_open === true){
     $sql .= '
       WHERE status = 1
+      ORDER BY
+      price
     ';
   }
 
   return fetch_all_query($db, $sql);
 }
+
+//値段が高い順の商品取得
+function get_items_expensive($db, $is_open = false){
+  $sql = '
+    SELECT
+      item_id, 
+      name,
+      stock,
+      price,
+      image,
+      status
+    FROM
+      items
+  ';
+  if($is_open === true){
+    $sql .= '
+      WHERE status = 1
+      ORDER BY
+      price DESC
+    ';
+  }
+
+  return fetch_all_query($db, $sql);
+}
+
+
+
 
 //全てのアイテム情報を取得する関数
 function get_all_items($db){
@@ -51,8 +121,16 @@ function get_all_items($db){
 }
 
 //公開になっているアイテム情報を取得する関数
-function get_open_items($db){
-  return get_items($db, true);
+function get_open_items($db, $sort){
+    if($sort === '価格の安い順') {
+      return get_items_cheap($db, true);
+    } else if($sort === '価格の高い順') {
+      return get_items_expensive($db, true);
+    } else if($sort === '新着順') {
+      return get_items_new($db, true);
+    }
+
+  return get_items_new($db, true);
 }
 
 function regist_item($db, $name, $price, $stock, $status, $image){
